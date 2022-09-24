@@ -1,0 +1,10 @@
+.idea 
+_notes.*
+scratch.py 
+*.log
+.env
+*.py[cod]
+*$py.class
+/__pycache__
+/.idea
+/venv

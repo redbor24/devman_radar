@@ -72,11 +72,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('Telegram_ID', type=str, help='ID пользователя Телеграм')
     args = parser.parse_args()
+    TG_USERID = args.Telegram_ID
 
     TG_TOKEN = env('TG_TOKEN')
     DEVMAM_TOKEN = env('DEVMAM_TOKEN')
     DEVMAN_URL = env('DEVMAN_URL')
-
-    TG_USERID = args.Telegram_ID
 
     main()
