@@ -9,23 +9,23 @@ from requests.exceptions import ConnectionError, ReadTimeout
 
 
 def check_devman_answers(devmam_token, devman_url, tg_token, tg_userid):
-    moment = datetime.now().timestamp()
+    check_from = datetime.now().timestamp()
     while True:
         try:
             logging.info('Ожидание изменения статуса работ с: '
-                         f'{datetime.fromtimestamp(moment).strftime("%Y-%m-%d %H:%M:%S")}')
+                         f'{datetime.fromtimestamp(check_from).strftime("%Y-%m-%d %H:%M:%S")}')
             headers = {
                 'authorization': devmam_token,
-                'timestamp': str(moment)
+                'timestamp': str(check_from)
             }
             response = requests.get(devman_url, headers=headers)
             response.raise_for_status()
-            resp_data = response.json()
-            if resp_data['status'] == 'timeout':
-                moment = resp_data['timestamp_to_request']
-            if resp_data['status'] == 'found':
-                moment = resp_data['last_attempt_timestamp']
-                send_message(tg_token, tg_userid, format_answers(resp_data['new_attempts']))
+            lesson_review = response.json()
+            if lesson_review['status'] == 'timeout':
+                check_from = lesson_review['timestamp_to_request']
+            if lesson_review['status'] == 'found':
+                check_from = lesson_review['last_attempt_timestamp']
+                send_message(tg_token, tg_userid, format_answers(lesson_review['new_attempts']))
         except (ReadTimeout, ConnectionError):
             logging.warning('No server answer...')
 
