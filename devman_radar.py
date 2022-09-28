@@ -52,10 +52,6 @@ def send_message(chat_userid, message):
     logging.info(f'  Пользователь: {chat_userid}')
 
 
-def main():
-    check_devman_answers(DEVMAM_TOKEN, DEVMAN_URL, TG_USERID)
-
-
 if __name__ == '__main__':
     env = Env()
     env.read_env()
@@ -78,4 +74,4 @@ if __name__ == '__main__':
     DEVMAM_TOKEN = env('DEVMAM_TOKEN')
     DEVMAN_URL = env('DEVMAN_URL')
 
-    main()
+    check_devman_answers(DEVMAM_TOKEN, DEVMAN_URL, TG_USERID)
