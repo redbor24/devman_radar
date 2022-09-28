@@ -25,7 +25,13 @@ def check_devman_answers(devmam_token, devman_url, tg_token, tg_userid):
                 check_from = lesson_review['timestamp_to_request']
             if lesson_review['status'] == 'found':
                 check_from = lesson_review['last_attempt_timestamp']
-                send_message(tg_token, tg_userid, format_answers(lesson_review['new_attempts']))
+                formatted_message = format_answers(lesson_review['new_attempts'])
+                bot = telegram.Bot(tg_token)
+                bot.send_message(chat_id=tg_userid, text=formatted_message)
+                print(formatted_message)
+                logging.info('Отправлено в Телеграм:')
+                logging.info(f'  Сообщение: {formatted_message}')
+                logging.info(f'  Пользователь: {tg_userid}')
         except (ReadTimeout, ConnectionError):
             logging.warning('No server answer...')
 
@@ -42,14 +48,6 @@ def format_answers(devman_answers):
         formatted_answer = f'{formatted_answer} {answer_text}\n'
 
     return formatted_answer
-
-
-def send_message(tg_token, chat_userid, message):
-    bot = telegram.Bot(tg_token)
-    bot.send_message(chat_id=chat_userid, text=message)
-    logging.info('Отправлено в Телеграм:')
-    logging.info(f'  Сообщение: {message}')
-    logging.info(f'  Пользователь: {chat_userid}')
 
 
 if __name__ == '__main__':
