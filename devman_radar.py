@@ -8,7 +8,7 @@ from environs import Env
 from requests.exceptions import ConnectionError, ReadTimeout
 
 
-def check_devman_answers(devmam_token, devman_url, tg_userid):
+def check_devman_answers(devmam_token, devman_url, tg_token, tg_userid):
     moment = datetime.now().timestamp()
     while True:
         try:
@@ -25,7 +25,7 @@ def check_devman_answers(devmam_token, devman_url, tg_userid):
                 moment = resp_data['timestamp_to_request']
             if resp_data['status'] == 'found':
                 moment = resp_data['last_attempt_timestamp']
-                send_message(tg_userid, format_answers(resp_data['new_attempts']))
+                send_message(tg_token, tg_userid, format_answers(resp_data['new_attempts']))
         except (ReadTimeout, ConnectionError):
             logging.warning('No server answer...')
 
@@ -44,8 +44,8 @@ def format_answers(devman_answers):
     return formatted_answer
 
 
-def send_message(chat_userid, message):
-    bot = telegram.Bot(TG_TOKEN)
+def send_message(tg_token, chat_userid, message):
+    bot = telegram.Bot(tg_token)
     bot.send_message(chat_id=chat_userid, text=message)
     logging.info('Отправлено в Телеграм:')
     logging.info(f'  Сообщение: {message}')
@@ -68,10 +68,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('Telegram_ID', type=str, help='ID пользователя Телеграм')
     args = parser.parse_args()
-    TG_USERID = args.Telegram_ID
 
+    TG_USERID = args.Telegram_ID
     TG_TOKEN = env('TG_TOKEN')
+
     DEVMAM_TOKEN = env('DEVMAM_TOKEN')
     DEVMAN_URL = env('DEVMAN_URL')
 
-    check_devman_answers(DEVMAM_TOKEN, DEVMAN_URL, TG_USERID)
+    check_devman_answers(DEVMAM_TOKEN, DEVMAN_URL, TG_TOKEN, TG_USERID)
