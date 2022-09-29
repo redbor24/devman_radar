@@ -1,5 +1,6 @@
 import argparse
 import logging
+import time
 from datetime import datetime
 
 import requests
@@ -32,8 +33,13 @@ def check_devman_answers(devmam_token, devman_url, tg_token, tg_userid):
                 logging.info('Отправлено в Телеграм:')
                 logging.info(f'  Сообщение: {formatted_message}')
                 logging.info(f'  Пользователь: {tg_userid}')
-        except (ReadTimeout, ConnectionError):
-            logging.warning('No server answer...')
+        except ConnectionError as e:
+            logging.warning(f'=== Ошибка соединения: {e}')
+            time.sleep(300)
+        except ReadTimeout as e:
+            logging.warning(f'=== Ошибка ожидания ответа: {e}')
+        except Exception as e:
+            logging.warning(f'=== Прочие ошибки: {e}')
 
 
 def format_answers(devman_answers):
