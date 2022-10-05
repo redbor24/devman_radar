@@ -29,7 +29,6 @@ def check_devman_answers(devmam_token, devman_url, tg_token, tg_userid):
                 formatted_message = format_answers(lesson_review['new_attempts'])
                 bot = telegram.Bot(tg_token)
                 bot.send_message(chat_id=tg_userid, text=formatted_message)
-                print(formatted_message)
                 logging.info('Отправлено в Телеграм:')
                 logging.info(f'  Сообщение: {formatted_message}')
                 logging.info(f'  Пользователь: {tg_userid}')
