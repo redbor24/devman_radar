@@ -70,10 +70,10 @@ if __name__ == '__main__':
     logging.info('Для завершения работы нажмите Ctrl+C или закройте окно CMD.exe')
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('Telegram_ID', type=str, help='ID пользователя Телеграм')
+    parser.add_argument('telegram_id', type=str, help='id пользователя Телеграм')
     args = parser.parse_args()
 
-    TG_USERID = args.Telegram_ID
+    TG_USERID = args.telegram_id
     TG_TOKEN = env('TG_TOKEN')
 
     DEVMAM_TOKEN = env('DEVMAM_TOKEN')
