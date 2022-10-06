@@ -9,38 +9,6 @@ from environs import Env
 from requests.exceptions import ConnectionError, ReadTimeout
 
 
-def check_devman_answers(devmam_token, devman_url, tg_token, tg_userid):
-    check_from = datetime.now().timestamp()
-    while True:
-        try:
-            logging.info('Ожидание изменения статуса работ с: '
-                         f'{datetime.fromtimestamp(check_from).strftime("%Y-%m-%d %H:%M:%S")}')
-            headers = {
-                'authorization': devmam_token,
-                'timestamp': str(check_from)
-            }
-            response = requests.get(devman_url, headers=headers)
-            response.raise_for_status()
-            lesson_review = response.json()
-            if lesson_review['status'] == 'timeout':
-                check_from = lesson_review['timestamp_to_request']
-            if lesson_review['status'] == 'found':
-                check_from = lesson_review['last_attempt_timestamp']
-                formatted_message = format_answers(lesson_review['new_attempts'])
-                bot = telegram.Bot(tg_token)
-                bot.send_message(chat_id=tg_userid, text=formatted_message)
-                logging.info('Отправлено в Телеграм:')
-                logging.info(f'  Сообщение: {formatted_message}')
-                logging.info(f'  Пользователь: {tg_userid}')
-        except ConnectionError as e:
-            logging.warning(f'=== Ошибка соединения: {e}')
-            time.sleep(300)
-        except ReadTimeout as e:
-            logging.warning(f'=== Ошибка ожидания ответа: {e}')
-        except Exception as e:
-            logging.warning(f'=== Прочие ошибки: {e}')
-
-
 def format_answers(devman_answers):
     formatted_answer = ''
     for answer in devman_answers:
@@ -72,10 +40,38 @@ if __name__ == '__main__':
     parser.add_argument('telegram_id', type=str, help='id пользователя Телеграм')
     args = parser.parse_args()
 
-    TG_USERID = args.telegram_id
-    TG_TOKEN = env('TG_TOKEN')
+    tg_userid = args.telegram_id
+    tg_token = env('TG_TOKEN')
 
-    DEVMAM_TOKEN = env('DEVMAM_TOKEN')
-    DEVMAN_URL = env('DEVMAN_URL')
+    devman_token = env('DEVMAM_TOKEN')
+    devman_url = env('DEVMAN_URL')
 
-    check_devman_answers(DEVMAM_TOKEN, DEVMAN_URL, TG_TOKEN, TG_USERID)
+    check_from = datetime.now().timestamp()
+    while True:
+        try:
+            logging.info('Ожидание изменения статуса работ с: '
+                         f'{datetime.fromtimestamp(check_from).strftime("%Y-%m-%d %H:%M:%S")}')
+            headers = {
+                'authorization': devman_token,
+                'timestamp': str(check_from)
+            }
+            response = requests.get(devman_url, headers=headers)
+            response.raise_for_status()
+            lesson_review = response.json()
+            if lesson_review['status'] == 'timeout':
+                check_from = lesson_review['timestamp_to_request']
+            if lesson_review['status'] == 'found':
+                check_from = lesson_review['last_attempt_timestamp']
+                formatted_message = format_answers(lesson_review['new_attempts'])
+                bot = telegram.Bot(tg_token)
+                bot.send_message(chat_id=tg_userid, text=formatted_message)
+                logging.info('Отправлено в Телеграм:')
+                logging.info(f'  Сообщение: {formatted_message}')
+                logging.info(f'  Пользователь: {tg_userid}')
+        except ConnectionError as e:
+            logging.warning(f'=== Ошибка соединения: {e}')
+            time.sleep(300)
+        except ReadTimeout as e:
+            logging.warning(f'=== Ошибка ожидания ответа: {e}')
+        except Exception as e:
+            logging.warning(f'=== Прочие ошибки: {e}')
