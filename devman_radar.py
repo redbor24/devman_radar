@@ -47,12 +47,12 @@ if __name__ == '__main__':
     devman_url = env('DEVMAN_URL')
 
     bot = telegram.Bot(tg_token)
+    message = 'Мониторинг изменения статуса работ запущен'
+    logging.info(message)
+    bot.send_message(chat_id=tg_userid, text=message)
     check_from = datetime.now().timestamp()
     while True:
         try:
-            message = 'Мониторинг изменения статуса работ запущен'
-            logging.info(message)
-            bot.send_message(chat_id=tg_userid, text=message)
             headers = {
                 'authorization': devman_token,
                 'timestamp': str(check_from)
