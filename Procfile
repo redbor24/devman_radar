@@ -1,0 +1,1 @@
+bot: python3 devman_radar.py 901108747
