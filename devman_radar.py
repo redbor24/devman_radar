@@ -46,11 +46,13 @@ if __name__ == '__main__':
     devman_token = env('DEVMAM_TOKEN')
     devman_url = env('DEVMAN_URL')
 
+    bot = telegram.Bot(tg_token)
     check_from = datetime.now().timestamp()
     while True:
         try:
-            logging.info('Ожидание изменения статуса работ с: '
-                         f'{datetime.fromtimestamp(check_from).strftime("%Y-%m-%d %H:%M:%S")}')
+            message = 'Мониторинг изменения статуса работ запущен'
+            logging.info(message)
+            bot.send_message(chat_id=tg_userid, text=message)
             headers = {
                 'authorization': devman_token,
                 'timestamp': str(check_from)
@@ -63,15 +65,19 @@ if __name__ == '__main__':
             if lesson_review['status'] == 'found':
                 check_from = lesson_review['last_attempt_timestamp']
                 formatted_message = format_answers(lesson_review['new_attempts'])
-                bot = telegram.Bot(tg_token)
+
                 bot.send_message(chat_id=tg_userid, text=formatted_message)
                 logging.info('Отправлено в Телеграм:')
                 logging.info(f'  Сообщение: {formatted_message}')
                 logging.info(f'  Пользователь: {tg_userid}')
         except ConnectionError as e:
-            logging.warning(f'=== Ошибка соединения: {e}')
+            logging.error(f'Ошибка соединения: {e}')
             time.sleep(300)
         except ReadTimeout as e:
-            logging.warning(f'=== Ошибка ожидания ответа: {e}')
+            message = f'Ошибка ожидания ответа: {e}'
+            logging.error(message)
+            bot.send_message(chat_id=tg_userid, text=message)
         except Exception as e:
-            logging.warning(f'=== Прочие ошибки: {e}')
+            message = f'Прочие ошибки: {e}'
+            logging.error(message)
+            bot.send_message(chat_id=tg_userid, text=message)
