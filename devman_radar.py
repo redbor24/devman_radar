@@ -18,7 +18,10 @@ class AdminLogsHandler(logging.Handler):
 
     def emit(self, record):
         log_entry = self.format(record)
-        tg_bot.send_message(chat_id=tg_admin, text=log_entry)
+        if self.level > logging.INFO:
+            tg_bot.send_message(chat_id=tg_admin, text=log_entry)
+        else:
+            tg_bot.send_message(chat_id=tg_user, text=log_entry)
 
 
 def format_answers(devman_answers):
