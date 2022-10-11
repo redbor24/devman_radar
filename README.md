@@ -30,10 +30,13 @@ pip install -r requirements.txt
 ```
 DEVMAN_URL=https://dvmn.org/api/long_polling/
 TG_TOKEN=<токен, полученный от Bot-father>
+TG_ADMIN_USERID=<>
 DEVMAM_TOKEN=<devman_API token>
 ```
 
 Откройте в Телеграм диалог с ботом [Get My ID](https://t.me/getmyid_bot) и запишите "Your user ID".
+`TG_ADMIN_USERID` это Id Телеграм-пользователя, которому будут отправляться сообщения о состояинии бота.
+Перед использованием бота этому пользователю нужно так же начать диалог с ботом.
 
 ### Использование скрипта
 Откройте окно CMD.exe, перейдите в каталог скрипта и выполните:
