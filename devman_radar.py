@@ -20,8 +20,6 @@ class AdminLogsHandler(logging.Handler):
         log_entry = self.format(record)
         if self.level > logging.INFO:
             tg_bot.send_message(chat_id=tg_admin, text=log_entry)
-        else:
-            tg_bot.send_message(chat_id=tg_user, text=log_entry)
 
 
 def format_answers(devman_answers):
@@ -82,7 +80,9 @@ if __name__ == '__main__':
                 check_from = lesson_review['timestamp_to_request']
             if lesson_review['status'] == 'found':
                 check_from = lesson_review['last_attempt_timestamp']
-                logger.info(format_answers(lesson_review['new_attempts']))
+                formatted_message = format_answers(lesson_review['new_attempts'])
+                tg_bot.send_message(chat_id=tg_admin, text=formatted_message)
+                logger.info(formatted_message)
         except ConnectionError as e:
             logger.error(f'Ошибка соединения: {e}')
             time.sleep(300)
