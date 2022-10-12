@@ -71,9 +71,7 @@ if __name__ == '__main__':
     tg_handler.setLevel(logging.DEBUG)
     logger.addHandler(tg_handler)
 
-    logger.info('Мониторинг изменения статуса работ запущен')
-    logger.warning('Проверка...')
-    exit()
+    logger.warning('Мониторинг изменения статуса работ запущен')
 
     check_from = datetime.now().timestamp()
     while True:
