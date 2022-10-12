@@ -13,13 +13,20 @@ LOG_FILE_MAX_LEN = 10000000
 LOG_FORMAT = '%(asctime)s %(levelname)s:%(message)s'
 LOG_DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 
+logger = logging.getLogger('devman_radar')
+
 
 class AdminLogsHandler(logging.Handler):
 
+    def __init__(self, bot, admin_user):
+        super().__init__()
+        self.tg_bot = bot
+        self.tg_admin = admin_user
+
     def emit(self, record):
         log_entry = self.format(record)
-        if self.level > logging.INFO:
-            tg_bot.send_message(chat_id=tg_admin, text=log_entry)
+        if record.levelno > logging.INFO:
+            self.tg_bot.send_message(chat_id=self.tg_admin, text=log_entry)
 
 
 def format_answers(devman_answers):
@@ -51,7 +58,6 @@ if __name__ == '__main__':
     devman_token = env('DEVMAM_TOKEN')
     devman_url = env('DEVMAN_URL')
 
-    logger = logging.getLogger("devman_radar")
     logger.setLevel(logging.DEBUG)
 
     file_handler = RotatingFileHandler(
@@ -61,7 +67,7 @@ if __name__ == '__main__':
     logger.addHandler(file_handler)
 
     tg_bot = telegram.Bot(tg_token)
-    tg_handler = AdminLogsHandler()
+    tg_handler = AdminLogsHandler(tg_bot, tg_admin)
     tg_handler.setLevel(logging.DEBUG)
     logger.addHandler(tg_handler)
 
