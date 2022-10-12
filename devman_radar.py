@@ -25,7 +25,7 @@ class AdminLogsHandler(logging.Handler):
 
     def emit(self, record):
         log_entry = self.format(record)
-        if record.levelno > logging.INFO:
+        if self.tg_admin and record.levelno > logging.INFO:
             self.tg_bot.send_message(chat_id=self.tg_admin, text=log_entry)
 
 
@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
     tg_user = args.telegram_id
     tg_token = env('TG_TOKEN')
-    tg_admin = env('TG_ADMIN_USERID')
+    tg_admin = env('TG_ADMIN_USERID', '')
 
     devman_token = env('DEVMAM_TOKEN')
     devman_url = env('DEVMAN_URL')
@@ -72,6 +72,9 @@ if __name__ == '__main__':
     logger.addHandler(tg_handler)
 
     logger.info('Мониторинг изменения статуса работ запущен')
+    logger.warning('Проверка...')
+    exit()
+
     check_from = datetime.now().timestamp()
     while True:
         try:
